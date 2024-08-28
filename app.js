@@ -63,7 +63,7 @@ app.get('/api/images_1', (req, res) => {
   });
 });
 
-connect('mongodb://192.168.1.4:27017/', (err) => {
+connect(process.env.MONGO_URI, (err) => {
   if (err) {
     console.log("Impossible de se connecter à la base de données techniciens");
     process.exit(-1);
@@ -72,7 +72,7 @@ connect('mongodb://192.168.1.4:27017/', (err) => {
   }
 });
 
-connectMqttDB('mongodb://192.168.1.4:27017/mqttDataDB', (err) => {
+connectMqttDB(process.env.MONGO_URI, (err) => {
   if (err) {
     console.log("Impossible de se connecter à la base de données MQTT");
     process.exit(-1);

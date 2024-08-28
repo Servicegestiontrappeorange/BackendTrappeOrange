@@ -1,15 +1,45 @@
-const mongoose = require('mongoose');
+const { MongoClient, Db } = require('mongodb');
 
-const connectMqttDB = (url, callback) => {
-    mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
-        .then(() => {
-            console.log('Connected to MQTT Database');
-            callback(null);
+let client = null;
+
+function connectMqttDB(url, callback) {
+    if (client === null) {
+        client = new MongoClient(url)
+        client.connect((err) => {
+            if (err) {
+                client = null;
+                callback(err);
+            } else {
+                //si la connexion réussi on créé la collection
+                const db = client.db("mqttDataBase");
+                db.createCollection("mqttdatas", (err, result) => {
+                    if (err) {
+                        callback(err);
+                    } else {
+                        console.log("Collection mqttdatas créé avec succes'");
+                        callback();
+                    }
+
+                });
+
+            }
         })
-        .catch((err) => {
-            console.log('Erreur losr de la connexion à la base de donnée Mqtt')
-            callback(err);
-        });
-};
+    } else {
+        callback();
+    }
+}
 
-module.exports = { connectMqttDB };
+function db() {
+    const db = new Db(client, "mqttDataBase");
+    return db;
+
+}
+
+function fermer(client) {
+    if (client) {
+        client.close();
+        client = null;
+    }
+}
+
+module.exports = { connectMqttDB, client, db, fermer };

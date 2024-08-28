@@ -348,14 +348,6 @@ const getTechnicienDetailsByLogin = async (req, res) => {
     }
 }
 
-
-
-
-
-
-
-
-
 module.exports = {
     CreateTechnicien,
     getTechniciens,
